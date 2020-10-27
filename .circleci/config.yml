@@ -1,0 +1,13 @@
+version: 2.1
+
+jobs:
+  hello:
+    docker:
+      - image: alpine
+    steps:
+      - run: echo "Hello, world! 👋"
+
+workflows:
+  welcome:
+    jobs:
+      - hello
