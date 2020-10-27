@@ -13,10 +13,16 @@ def get_bintray_versions(project)
   json['versions']
 end
 
+def extract_development_version(versions)
+  versions
+    .select { |v| v =~ /\d+-.*/ }
+    .group_by { |v| v.split('-').first }
+end
+
 projects = [
   'mokagio/maven/utils-experiment'
 ]
 
 projects.each do |project|
-  puts get_bintray_versions(project)
+  puts extract_development_version(get_bintray_versions(project))
 end
