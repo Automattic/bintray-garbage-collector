@@ -1,8 +1,26 @@
+require 'dotenv'
 require 'net/http'
 require 'json'
 
+# We might want to extra this in a file to make it easier to edit
+projects = [
+  { bintray: 'mokagio/maven/utils-experiment', github: 'mokagio/WordPress-Utils-Android' }
+]
+
+Dotenv.load unless ENV['CI']
+
+@bintray_base_url = 'https://bintray.com/api/v1/packages'
+
+def read_from_environment!(key)
+  value = ENV[key]
+  raise "Missing #{key} environment variable" if value.nil? || value.to_s.empty?
+end
+
+@bintray_user = read_from_environment!('BINTRAY_USER')
+@bintray_key = read_from_environment!('BINTRAY_KEY')
+
 def get_bintray_versions(project)
-  uri = URI("https://bintray.com/api/v1/packages/#{project}")
+  uri = URI("#{@bintray_base_url}/#{project}")
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
   request = Net::HTTP::Get.new(uri.request_uri)
@@ -20,7 +38,13 @@ def extract_development_versions(versions)
 end
 
 def delete_bintray_version(project, version)
-  puts "TODO: Make API call to delete #{version} for #{project}"
+  uri = URI("#{@bintray_base_url}/#{project}/versions/#{version}")
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+  request = Net::HTTP::Delete.new(uri.request_uri)
+  request.basic_auth @bintray_user, @bintray_key
+
+  http.request(request)
 end
 
 def get_pr_state(repo, id)
@@ -34,10 +58,6 @@ def get_pr_state(repo, id)
 
   json['state']
 end
-
-projects = [
-  { bintray: 'mokagio/maven/utils-experiment', github: 'mokagio/WordPress-Utils-Android' }
-]
 
 projects.each do |project|
   extract_development_versions(get_bintray_versions(project[:bintray]))
