@@ -11,8 +11,11 @@ workflows:
   welcome:
     triggers:
       - schedule:
-          # Every day, at 0 minute and 0 hour (midnight)
-          cron: "0 0 * * *"
+          # This is every five minutes, just to test
+          #
+          # Interestingly, using the "*/5 * * * *" doesn't work. The validator
+          # says it's not a valid POSIX syntax (circleci config validate)
+          cron: "0,5,10,15,20,25,30,35,40,45,50,55 * * * *"
           filters:
             branches:
               only:
