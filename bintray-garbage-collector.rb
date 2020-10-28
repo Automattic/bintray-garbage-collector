@@ -14,6 +14,7 @@ Dotenv.load unless ENV['CI']
 def read_from_environment!(key)
   value = ENV[key]
   raise "Missing #{key} environment variable" if value.nil? || value.to_s.empty?
+  return value
 end
 
 @bintray_user = read_from_environment!('BINTRAY_USER')
