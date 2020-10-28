@@ -44,7 +44,10 @@ def delete_bintray_version(project, version)
   request = Net::HTTP::Delete.new(uri.request_uri)
   request.basic_auth @bintray_user, @bintray_key
 
-  http.request(request)
+  response = http.request(request)
+  json = JSON.parse(response.body)
+
+  puts json
 end
 
 def get_pr_state(repo, id)
