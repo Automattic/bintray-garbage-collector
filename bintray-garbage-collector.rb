@@ -60,11 +60,28 @@ def get_pr_state(repo, id)
 end
 
 projects.each do |project|
-  extract_development_versions(get_bintray_versions(project[:bintray]))
-    .select { |pr_id, _| get_pr_state(project[:github], pr_id) == 'closed' }
-    .values
-    .flatten
-    .each do |version|
+  # "Fancy" functional-ish version, with no option for logging...
+  #
+  # extract_development_versions(get_bintray_versions(project[:bintray]))
+  #   .select { |pr_id, _| get_pr_state(project[:github], pr_id) == 'closed' }
+  #   .values
+  #   .flatten
+  #   .each do |version|
+  #     delete_bintray_version(project[:bintray], version)
+  #   end
+
+  puts "Checking binaries for #{project[:bintray]} from GitHub #{project[:github]}."
+
+  versions = extract_development_versions(get_bintray_versions(project[:bintray]))
+  puts "Found binaries for PRs #{versions.keys.join(', ')}"
+
+  versions_to_delete = versions.select { |pr_id, _| get_pr_state(project[:github], pr_id) == 'closed' }
+
+  versions_to_delete.each do |pr_id, binaries|
+    puts "Deleting binaries for closed PR #{pr_id}"
+    binaries.each do |binary|
+      puts "Deleting binary #{binary}"
       delete_bintray_version(project[:bintray], version)
     end
+  end
 end
