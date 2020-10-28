@@ -40,10 +40,11 @@ projects = [
 ]
 
 projects.each do |project|
-  extract_development_versions(get_bintray_versions(project[:bintray])).each do |pr_id, binaries|
-    next unless get_pr_state(project[:github], pr_id) == 'closed'
-    binaries.each do |version|
+  extract_development_versions(get_bintray_versions(project[:bintray]))
+    .select { |pr_id, _| get_pr_state(project[:github], pr_id) == 'closed' }
+    .values
+    .flatten
+    .each do |version|
       delete_bintray_version(project[:bintray], version)
     end
-  end
 end
