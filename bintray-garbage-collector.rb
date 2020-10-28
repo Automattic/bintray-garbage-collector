@@ -81,7 +81,7 @@ projects.each do |project|
     puts "Deleting binaries for closed PR #{pr_id}"
     binaries.each do |binary|
       puts "Deleting binary #{binary}"
-      delete_bintray_version(project[:bintray], version)
+      delete_bintray_version(project[:bintray], binary)
     end
   end
 end
