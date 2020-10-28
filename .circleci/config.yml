@@ -20,5 +20,6 @@ workflows:
             branches:
               only:
                 - trunk
+                - ruby-script
     jobs:
       - hello
