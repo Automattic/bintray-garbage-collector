@@ -1,14 +1,14 @@
 version: 2.1
 
 jobs:
-  hello:
+  bintray_garbage_collection:
     docker:
-      - image: alpine
+      - image: circleci/ruby:2.7.1
     steps:
-      - run: echo "Hello, world! 👋"
+      - run: bundle exec ruby ./bintray-garbage-collector.rb
 
 workflows:
-  welcome:
+  bintray_garbage_collection:
     triggers:
       - schedule:
           # This is every five minutes, just to test
@@ -22,4 +22,4 @@ workflows:
                 - trunk
                 - ruby-script
     jobs:
-      - hello
+      - bintray_garbage_collection
