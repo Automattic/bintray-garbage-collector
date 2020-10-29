@@ -3,7 +3,7 @@ require './lib/garbage_collector.rb'
 
 # We might want to extra this in a file to make it easier to edit
 projects = [
-  { bintray: 'wordpress-mobile/maven/utils', github: 'wordpress-mobile/WordPress-Utils-Android' }
+  { bintray: 'mokagio/maven/utils-experiment', github: 'mokagio/WordPress-Utils-Android' }
 ]
 
 Dotenv.load unless ENV['CI']
