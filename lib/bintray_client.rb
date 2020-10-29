@@ -14,9 +14,16 @@ class BintrayClient
     request = Net::HTTP::Get.new(uri.request_uri)
 
     response = http.request(request)
+
+    return nil unless response.kind_of? Net::HTTPSuccess
+
     json = JSON.parse(response.body)
 
-    json['versions']
+    versions = json['versions']
+
+    return nil if versions.nil?
+
+    return versions
       .select { |v| v =~ /^\d+-.*$/ }
       .group_by { |v| v.split('-').first }
   end

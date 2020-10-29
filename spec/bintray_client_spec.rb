@@ -4,13 +4,14 @@ require 'net/http'
 
 RSpec.describe BintrayClient do
 
+  let(:base_url) { 'https://test.com' }
+  let(:package) { 'package_name' }
+
   describe 'requesting the version for a package' do
 
     context 'when the request is successful' do
 
       it 'returns only the development versions keyed by PR number' do
-        base_url = 'https://test.com'
-        package = 'package_name'
         response_versions = [
           '1.2.3',
           '1-abcdef',
@@ -29,6 +30,32 @@ RSpec.describe BintrayClient do
           '1' => ['1-abcdef', '1-bcdef0'],
           '2' => ['2-cdef01']
         })
+      end
+
+      context 'when the response_versions body no version key' do
+
+        it 'returns nil' do
+          stub_request(:get, "#{base_url}/#{package}")
+            .to_return(status: 200, body: { foo: 'bar' }.to_json)
+
+          client = BintrayClient.new(base_url)
+          versions = client.get_bintray_versions('package_name')
+
+          expect(versions).to be_nil
+        end
+      end
+
+      context 'when the request fails' do
+
+        it 'returns nil' do
+          stub_request(:get, "#{base_url}/#{package}")
+            .to_return(status: 400)
+
+          client = BintrayClient.new(base_url)
+          versions = client.get_bintray_versions('package_name')
+
+          expect(versions).to be_nil
+        end
       end
     end
 
