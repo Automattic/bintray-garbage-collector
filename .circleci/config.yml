@@ -11,16 +11,17 @@ jobs:
     steps:
       - checkout
       - run: bundle install && bundle exec rspec
-  hello:
+  bintray_garbage_collection:
     executor: ruby
     steps:
-      - run: echo "Hello, world! 👋"
+      - checkout
+      - run: bundle install && bundle exec ruby ./bin/bintray_garbage_collector.rb
 
 workflows:
   test:
     jobs:
       - test
-  welcome:
+  bintray_garbage_collection:
     triggers:
       - schedule:
           # Every day, at 0 minute and 0 hour (midnight)
@@ -30,4 +31,4 @@ workflows:
               only:
                 - trunk
     jobs:
-      - hello
+      - bintray_garbage_collection
