@@ -23,7 +23,7 @@ RSpec.describe BintrayClient do
         stub_request(:get, "#{base_url}/#{package}")
           .to_return(status: 200, body: get_package_response(response_versions))
 
-        client = BintrayClient.new(base_url)
+        client = BintrayClient.new('user', 'key', base_url)
         versions = client.get_bintray_versions('package_name')
 
         expect(versions).to eq({
@@ -32,13 +32,13 @@ RSpec.describe BintrayClient do
         })
       end
 
-      context 'when the response_versions body no version key' do
+      context 'when the response body has no version key' do
 
         it 'returns nil' do
           stub_request(:get, "#{base_url}/#{package}")
             .to_return(status: 200, body: { foo: 'bar' }.to_json)
 
-          client = BintrayClient.new(base_url)
+          client = BintrayClient.new('user', 'key', base_url)
           versions = client.get_bintray_versions('package_name')
 
           expect(versions).to be_nil
@@ -51,18 +51,78 @@ RSpec.describe BintrayClient do
           stub_request(:get, "#{base_url}/#{package}")
             .to_return(status: 400)
 
-          client = BintrayClient.new(base_url)
+          client = BintrayClient.new('user', 'key', base_url)
           versions = client.get_bintray_versions('package_name')
 
           expect(versions).to be_nil
         end
       end
     end
+  end
 
-    it 'can initialize without an explicit base_url value' do
-      client = BintrayClient.new
-      expect(client).to_not be_nil
+  describe 'deleting a package version' do
+
+    let(:version) { 'version-name' }
+
+    context 'when the request is successful' do
+
+      it 'returns true' do
+        # See https://www.jfrog.com/confluence/display/BT/Bintray+REST+API#BintrayRESTAPI-DeleteVersion
+        stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
+          .to_return(status: 200, body: { message: 'success' }.to_json)
+
+        client = BintrayClient.new('user', 'key', base_url)
+        result = client.delete_bintray_version('package_name', version)
+
+        expect(result).to be_truthy
+      end
     end
+
+    context 'when the response body has an error' do
+
+      it 'returns false' do
+        # See https://www.jfrog.com/confluence/display/BT/Bintray+REST+API#BintrayRESTAPI-DeleteVersion
+        stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
+          .to_return(status: 200, body: { message: 'some error' }.to_json)
+
+        client = BintrayClient.new('user', 'key', base_url)
+        result = client.delete_bintray_version('package_name', version)
+
+        expect(result).to be_falsy
+      end
+    end
+
+    context 'when the response body has no message' do
+
+      it 'returns false' do
+        stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
+          .to_return(status: 200, body: { foo: 'bar' }.to_json)
+
+        client = BintrayClient.new('user', 'key', base_url)
+        result = client.delete_bintray_version('package_name', version)
+
+        expect(result).to be_falsy
+      end
+    end
+
+    context 'when the request fails' do
+
+      it 'returns false' do
+        # See https://www.jfrog.com/confluence/display/BT/Bintray+REST+API#BintrayRESTAPI-DeleteVersion
+        stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
+          .to_return(status: 400)
+
+        client = BintrayClient.new('user', 'key', base_url)
+        result = client.delete_bintray_version('package_name', version)
+
+        expect(result).to be_falsy
+      end
+    end
+  end
+
+  it 'can initialize without an explicit base_url value' do
+    client = BintrayClient.new('user', 'key')
+    expect(client).to_not be_nil
   end
 end
 
