@@ -1,14 +1,26 @@
 version: 2.1
 
-jobs:
-  bintray_garbage_collection:
+executors:
+  ruby:
     docker:
       - image: circleci/ruby:2.7.1
+
+jobs:
+  test:
+    executor: ruby
+    steps:
+      - checkout
+      - run: bundle install && bundle exec rspec
+  bintray_garbage_collection:
+    executor: ruby
     steps:
       - checkout
       - run: bundle install && bundle exec ruby ./bin/bintray_garbage_collector.rb
 
 workflows:
+  test:
+    jobs:
+      - test
   bintray_garbage_collection:
     triggers:
       - schedule:
