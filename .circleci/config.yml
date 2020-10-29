@@ -24,16 +24,11 @@ workflows:
   bintray_garbage_collection:
     triggers:
       - schedule:
-          # Every five minutes, to test the behavior
-          #
-          # I tried to use "*/5" but `cicleci config validate` says that it's
-          # not a valid POSIX syntax for cron jobs...
-          cron: "0,5,10,15,20,25,30,35,40,45,50,55 * * * *"
+          # Every day, at 0 minute and 0 hour (midnight)
+          cron: "0 0 * * *"
           filters:
             branches:
               only:
                 - trunk
-                # Add the name of this branch for the test
-                - schedule-test
     jobs:
       - bintray_garbage_collection
