@@ -1,13 +1,25 @@
 version: 2.1
 
-jobs:
-  hello:
+executors:
+  ruby:
     docker:
-      - image: alpine
+      - image: circleci/ruby:2.7.1
+
+jobs:
+  test:
+    executor: ruby
+    steps:
+      - checkout
+      - run: bundle install && bundle exec rspec
+  hello:
+    executor: ruby
     steps:
       - run: echo "Hello, world! 👋"
 
 workflows:
+  test:
+    jobs:
+      - test
   welcome:
     triggers:
       - schedule:
