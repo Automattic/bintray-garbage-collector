@@ -15,10 +15,9 @@ def read_from_environment!(key)
   return value
 end
 
-bintray_user = read_from_environment!('BINTRAY_USER')
-bintray_key = read_from_environment!('BINTRAY_KEY')
-
-verbose = true
-dry_run = false # Use this for debugging
-
-GarbageCollector.new(bintray_user, bintray_key, verbose, dry_run).run(projects)
+GarbageCollector.new(
+  bintray_user: read_from_environment!('BINTRAY_USER'),
+  bintray_key: read_from_environment!('BINTRAY_KEY'),
+  verbose: true,
+  dry_run: false
+).run(projects)

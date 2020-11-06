@@ -3,13 +3,13 @@ require_relative 'github_client'
 
 class GarbageCollector
 
-  def initialize(bintray_user, bintray_key, verbose = false, dry_run = false)
+  def initialize(bintray_user:, bintray_key:, verbose: false, dry_run: false)
     @bintray_user = bintray_user
     @bintray_key = bintray_key
     @verbose = verbose
     @dry_run = dry_run
 
-    @bintray = BintrayClient.new(bintray_user, bintray_key)
+    @bintray = BintrayClient.new(user: bintray_user, key: bintray_key)
     @github = GitHubClient.new
   end
 
@@ -17,7 +17,7 @@ class GarbageCollector
     projects.each do |project|
       log "Looking for versions to delete for #{project[:bintray]}..."
 
-      dev_versions = @bintray.get_bintray_versions(project[:bintray])
+      dev_versions = @bintray.get_bintray_versions(project: project[:bintray])
 
       if dev_versions.empty?
         log "> No versions found. Moving on."
@@ -29,7 +29,7 @@ class GarbageCollector
       dev_versions.each do |pr_id, versions|
         log "Checking if versions for PR #{pr_id} should be deleted..."
 
-        if @github.is_pr_closed?(project[:github], pr_id)
+        if @github.is_pr_closed?(repo: project[:github], pr_id: pr_id)
           log "Deleting versions for PR #{pr_id}..."
         else
           log "> PR #{pr_id} is open. Skipping."
@@ -42,7 +42,7 @@ class GarbageCollector
             next
           end
 
-          if @bintray.delete_bintray_version(project[:bintray], version)
+          if @bintray.delete_bintray_version(project: project[:bintray], version: version)
             log "> Deleted version #{version}."
           else
             log "> Failed to delete version #{version}."

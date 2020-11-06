@@ -23,8 +23,8 @@ RSpec.describe BintrayClient do
         stub_request(:get, "#{base_url}/#{package}")
           .to_return(status: 200, body: get_package_response(response_versions))
 
-        client = BintrayClient.new('user', 'key', base_url)
-        versions = client.get_bintray_versions('package_name')
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        versions = client.get_bintray_versions(project: 'package_name')
 
         expect(versions).to eq({
           '1' => ['1-abcdef', '1-bcdef0'],
@@ -38,8 +38,8 @@ RSpec.describe BintrayClient do
           stub_request(:get, "#{base_url}/#{package}")
             .to_return(status: 200, body: { foo: 'bar' }.to_json)
 
-          client = BintrayClient.new('user', 'key', base_url)
-          versions = client.get_bintray_versions('package_name')
+          client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+          versions = client.get_bintray_versions(project: 'package_name')
 
           expect(versions).to be_nil
         end
@@ -52,8 +52,8 @@ RSpec.describe BintrayClient do
         stub_request(:get, "#{base_url}/#{package}")
           .to_return(status: 400)
 
-        client = BintrayClient.new('user', 'key', base_url)
-        versions = client.get_bintray_versions('package_name')
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        versions = client.get_bintray_versions(project: 'package_name')
 
         expect(versions).to be_nil
       end
@@ -71,8 +71,8 @@ RSpec.describe BintrayClient do
         stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
           .to_return(status: 200, body: { message: 'success' }.to_json)
 
-        client = BintrayClient.new('user', 'key', base_url)
-        result = client.delete_bintray_version('package_name', version)
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        result = client.delete_bintray_version(project: 'package_name', version: version)
 
         expect(result).to be_truthy
       end
@@ -85,8 +85,8 @@ RSpec.describe BintrayClient do
         stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
           .to_return(status: 200, body: { message: 'some error' }.to_json)
 
-        client = BintrayClient.new('user', 'key', base_url)
-        result = client.delete_bintray_version('package_name', version)
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        result = client.delete_bintray_version(project: 'package_name', version: version)
 
         expect(result).to be_falsy
       end
@@ -98,8 +98,8 @@ RSpec.describe BintrayClient do
         stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
           .to_return(status: 200, body: { foo: 'bar' }.to_json)
 
-        client = BintrayClient.new('user', 'key', base_url)
-        result = client.delete_bintray_version('package_name', version)
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        result = client.delete_bintray_version(project: 'package_name', version: version)
 
         expect(result).to be_falsy
       end
@@ -112,8 +112,8 @@ RSpec.describe BintrayClient do
         stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
           .to_return(status: 400)
 
-        client = BintrayClient.new('user', 'key', base_url)
-        result = client.delete_bintray_version('package_name', version)
+        client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
+        result = client.delete_bintray_version(project: 'package_name', version: version)
 
         expect(result).to be_falsy
       end
@@ -121,7 +121,7 @@ RSpec.describe BintrayClient do
   end
 
   it 'can initialize without an explicit base_url value' do
-    client = BintrayClient.new('user', 'key')
+    client = BintrayClient.new(user: 'user', key: 'key')
     expect(client).to_not be_nil
   end
 end

@@ -17,8 +17,8 @@ RSpec.describe GitHubClient do
         stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
           .to_return(status: 200, body: get_pr_response('closed'))
 
-        client = GitHubClient.new(base_url)
-        result = client.is_pr_closed?(repo, pr)
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
 
         expect(result).to be_truthy
       end
@@ -27,8 +27,8 @@ RSpec.describe GitHubClient do
         stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
           .to_return(status: 200, body: get_pr_response('open'))
 
-        client = GitHubClient.new(base_url)
-        result = client.is_pr_closed?(repo, pr)
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
 
         expect(result).to be_falsy
       end
@@ -40,8 +40,8 @@ RSpec.describe GitHubClient do
         stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
           .to_return(status: 200, body: { foo: 'bar' }.to_json)
 
-        client = GitHubClient.new(base_url)
-        result = client.is_pr_closed?(repo, pr)
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
 
         expect(result).to be_falsy
       end
@@ -53,8 +53,8 @@ RSpec.describe GitHubClient do
         stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
           .to_return(status: 400)
 
-        client = GitHubClient.new(base_url)
-        result = client.is_pr_closed?(repo, pr)
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
 
         expect(result).to be_falsy
       end
