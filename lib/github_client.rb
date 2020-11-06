@@ -1,23 +1,17 @@
-require 'net/http'
-require 'json'
+require_relative './http_client.rb'
 
 class GitHubClient
 
   def initialize(base_url = 'https://api.github.com')
     @base_url = base_url
+    @http_client = HTTPClient.new
   end
 
   def is_pr_closed?(repo, id)
     uri = URI("#{@base_url}/repos/#{repo}/pulls/#{id}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Get.new(uri.request_uri)
+    json = @http_client.get_json(uri)
 
-    response = http.request(request)
-
-    return nil unless response.kind_of? Net::HTTPSuccess
-
-    json = JSON.parse(response.body)
+    return nil if json.nil?
 
     json['state'] == 'closed'
   end

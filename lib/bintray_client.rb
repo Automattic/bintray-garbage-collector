@@ -1,5 +1,4 @@
-require 'net/http'
-require 'json'
+require_relative './http_client.rb'
 
 class BintrayClient
 
@@ -7,19 +6,14 @@ class BintrayClient
     @base_url = base_url
     @user = user
     @key = key
+    @http_client = HTTPClient.new
   end
 
   def get_bintray_versions(project)
     uri = URI("#{@base_url}/#{project}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Get.new(uri.request_uri)
+    json = @http_client.get_json(uri)
 
-    response = http.request(request)
-
-    return nil unless response.kind_of? Net::HTTPSuccess
-
-    json = JSON.parse(response.body)
+    return nil if json.nil?
 
     versions = json['versions']
 
@@ -32,16 +26,9 @@ class BintrayClient
 
   def delete_bintray_version(project, version)
     uri = URI("#{@base_url}/#{project}/versions/#{version}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Delete.new(uri.request_uri)
-    request.basic_auth @user, @key
+    json = @http_client.delete_json(uri)
 
-    response = http.request(request)
-
-    return nil unless response.kind_of? Net::HTTPSuccess
-
-    json = JSON.parse(response.body)
+    return nil if json.nil?
 
     message = json['message']
 
