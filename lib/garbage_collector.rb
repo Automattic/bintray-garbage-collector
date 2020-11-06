@@ -38,7 +38,7 @@ class GarbageCollector
 
         versions.each do |version|
           if @dry_run
-            log "> DRY RUN! Deleted version #{version}"
+            log "> DRY RUN: Would have deleted version #{version}."
             next
           end
 
