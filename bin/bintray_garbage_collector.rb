@@ -6,11 +6,12 @@ projects = [
   { bintray: 'wordpress-mobile/maven/utils', github: 'wordpress-mobile/WordPress-Utils-Android' }
 ]
 
-Dotenv.load unless ENV['CI']
+Dotenv.load
 
 def read_from_environment!(key)
   value = ENV[key]
-  raise "Missing #{key} environment variable" if value.nil? || value.to_s.empty?
+  message = "Missing #{key} environment variable. If you are running this locally, consider setting up a .env file using .env.sample as a starting point"
+  raise message if value.nil? || value.to_s.empty?
   return value
 end
 
