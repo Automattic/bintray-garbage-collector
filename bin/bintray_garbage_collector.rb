@@ -1,5 +1,5 @@
 require 'dotenv'
-require './lib/garbage_collector.rb'
+require_relative '../lib/garbage_collector.rb'
 
 # We might want to extract this in a file to make it easier to edit
 projects = [
