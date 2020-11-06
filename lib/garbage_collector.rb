@@ -32,7 +32,7 @@ class GarbageCollector
         if @github.is_pr_closed?(project[:github], pr_id)
           log "Deleting versions for PR #{pr_id}"
         else
-          log "PR #{pr_id} is not closed. Skipping."
+          log "PR #{pr_id} is open. Skipping."
           next
         end
 
