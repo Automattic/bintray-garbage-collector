@@ -44,18 +44,18 @@ RSpec.describe BintrayClient do
           expect(versions).to be_nil
         end
       end
+    end
 
-      context 'when the request fails' do
+    context 'when the request fails' do
 
-        it 'returns nil' do
-          stub_request(:get, "#{base_url}/#{package}")
-            .to_return(status: 400)
+      it 'returns nil' do
+        stub_request(:get, "#{base_url}/#{package}")
+          .to_return(status: 400)
 
-          client = BintrayClient.new('user', 'key', base_url)
-          versions = client.get_bintray_versions('package_name')
+        client = BintrayClient.new('user', 'key', base_url)
+        versions = client.get_bintray_versions('package_name')
 
-          expect(versions).to be_nil
-        end
+        expect(versions).to be_nil
       end
     end
   end
