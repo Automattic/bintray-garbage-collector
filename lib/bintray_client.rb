@@ -1,4 +1,4 @@
-require_relative './http_client.rb'
+require_relative './json_http_client.rb'
 
 class BintrayClient
 
@@ -6,12 +6,12 @@ class BintrayClient
     @base_url = base_url
     @user = user
     @key = key
-    @http_client = HTTPClient.new
+    @json_http_client = JSONHTTPClient.new
   end
 
   def get_bintray_versions(project:)
     uri = URI("#{@base_url}/#{project}")
-    json = @http_client.get_json(uri: uri)
+    json = @json_http_client.get(uri: uri)
 
     return nil if json.nil?
 
@@ -26,7 +26,7 @@ class BintrayClient
 
   def delete_bintray_version(project:, version:)
     uri = URI("#{@base_url}/#{project}/versions/#{version}")
-    json = @http_client.delete_json(uri: uri)
+    json = @json_http_client.delete(uri: uri)
 
     return nil if json.nil?
 

@@ -1,9 +1,9 @@
 require 'net/http'
 require 'json'
 
-class HTTPClient
+class JSONHTTPClient
 
-  def get_json(uri:)
+  def get(uri:)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     request = Net::HTTP::Get.new(uri.request_uri)
@@ -15,7 +15,7 @@ class HTTPClient
     JSON.parse(response.body)
   end
 
-  def delete_json(uri:)
+  def delete(uri:)
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     request = Net::HTTP::Delete.new(uri.request_uri)
