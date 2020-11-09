@@ -1,8 +1,15 @@
 require_relative 'bintray_client'
 require_relative 'github_client'
 
+# +GarbageCollector+ is responsible for deleting all the versions of Bintray packages that belong GitHub pull requests that have been closed or merged
 class GarbageCollector
 
+  # A new instance of +GarbageCollector+
+  #
+  # @param bintray_user [String] the username to use to authenticate with Bintray
+  # @param bintray_key [String] the key to use to authenticate with Bintray
+  # @param verbose [Bool] whether to print information on the process execution to STDOUT
+  # @param dry_run [Bool] whether to execute or simulate distructive operations such as deleting versions from Bintray; useful when debugging
   def initialize(bintray_user:, bintray_key:, verbose: false, dry_run: false)
     @bintray_user = bintray_user
     @bintray_key = bintray_key
@@ -13,6 +20,9 @@ class GarbageCollector
     @github = GitHubClient.new
   end
 
+  # Runs the garbage collection on the given array of projects
+  #
+  # @param projects [Array] the array of +Hash+ projects on which to run the garbage collection
   def run(projects)
     projects.each do |project|
       log "Looking for versions to delete for #{project[:bintray]}..."
