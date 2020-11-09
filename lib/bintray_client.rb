@@ -4,9 +4,8 @@ class BintrayClient
 
   def initialize(user:, key:, base_url: 'https://bintray.com/api/v1/packages')
     @base_url = base_url
-    @user = user
-    @key = key
     @json_http_client = JSONHTTPClient.new
+    @auth = HTTPBasicAuth.new(user: user, password: key)
   end
 
   def get_bintray_versions(project:)
@@ -26,7 +25,7 @@ class BintrayClient
 
   def delete_bintray_version(project:, version:)
     uri = URI("#{@base_url}/#{project}/versions/#{version}")
-    json = @json_http_client.delete(uri: uri)
+    json = @json_http_client.delete(uri: uri, auth: @auth)
 
     return nil if json.nil?
 

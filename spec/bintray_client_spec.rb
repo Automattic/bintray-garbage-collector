@@ -69,6 +69,7 @@ RSpec.describe BintrayClient do
       it 'returns true' do
         # See https://www.jfrog.com/confluence/display/BT/Bintray+REST+API#BintrayRESTAPI-DeleteVersion
         stub_request(:delete, "#{base_url}/#{package}/versions/#{version}")
+          .with(basic_auth: ['user', 'key'])
           .to_return(status: 200, body: { message: 'success' }.to_json)
 
         client = BintrayClient.new(user: 'user', key: 'key', base_url: base_url)
