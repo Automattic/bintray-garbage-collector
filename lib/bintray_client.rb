@@ -31,6 +31,11 @@ class BintrayClient
 
     return nil if versions.nil?
 
+    # The format for the development version doesn't follow semantic version.
+    # It is "<PR id>-<commit SHA>".
+    #
+    # See https://github.com/wordpress-mobile/WordPress-Utils-Android/pull/40
+    # for an example implementation.
     return versions
       .select { |v| v =~ /^\d+-.*$/ }
       .group_by { |v| v.split('-').first }
