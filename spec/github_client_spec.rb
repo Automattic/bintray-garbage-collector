@@ -1,3 +1,72 @@
+require 'github_client'
+require 'json'
+require 'net/http'
+
+RSpec.describe GitHubClient do
+
+  let(:base_url) { 'https://test.com' }
+
+  describe 'checking if a PR in a repo is closed' do
+
+    let(:repo) { 'a-repo' }
+    let(:pr) { 123 }
+
+    context 'when the request is successful' do
+
+      it 'returns true if the state is closed' do
+        stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
+          .to_return(status: 200, body: get_pr_response('closed'))
+
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
+
+        expect(result).to be_truthy
+      end
+
+      it 'returns false if the state is not closed' do
+        stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
+          .to_return(status: 200, body: get_pr_response('open'))
+
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
+
+        expect(result).to be_falsy
+      end
+    end
+
+    context 'when the response has no state key' do
+
+      it 'returns false' do
+        stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
+          .to_return(status: 200, body: { foo: 'bar' }.to_json)
+
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
+
+        expect(result).to be_falsy
+      end
+    end
+
+    context 'when the request fails' do
+
+      it 'returns false' do
+        stub_request(:get, "#{base_url}/repos/#{repo}/pulls/#{pr}")
+          .to_return(status: 400)
+
+        client = GitHubClient.new(base_url: base_url)
+        result = client.is_pr_closed?(repo: repo, pr_id: pr)
+
+        expect(result).to be_falsy
+      end
+    end
+  end
+
+  it 'can initialize without an explicit base_url value' do
+    client = GitHubClient.new
+    expect(client).to_not be_nil
+  end
+end
+
 def get_pr_response(state)
   # This is only a fragment of the full API response with the data relevant to
   # the job we have to do.

@@ -6,6 +6,10 @@ ruby File.read('.ruby-version').strip
 
 gem "dotenv"
 
+group :dev do
+  gem "yard"
+end
+
 group :test do
   gem "rspec"
   gem "webmock"
