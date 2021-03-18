@@ -1,4 +1,7 @@
 projects:
+  - name: Gutenberg Mobile
+    bintray: wordpress-mobile/maven/react-native-gutenberg-bridge
+    github: wordpress-mobile/gutenberg-mobile
   - name: WordPress Utils
     bintray: wordpress-mobile/maven/utils
     github: wordpress-mobile/WordPress-Utils-Android
