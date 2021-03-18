@@ -2,6 +2,18 @@ require 'garbage_collector'
 
 RSpec.describe GarbageCollector do
 
+  it 'fails gracefully when a Bintray project cannot be found' do
+    gb = GarbageCollector.new(bintray_user: 'user', bintray_key: 'key')
+    projects = [
+      { bintray: 'bt_project_name_1', github: 'gh_project_name_1' },
+    ]
+
+    expect_any_instance_of(BintrayClient).to receive(:get_bintray_versions)
+      .and_return(nil)
+
+    gb.run(projects)
+  end
+
   it 'requests to delete all the Bintray version for closed PRs' do
     gb = GarbageCollector.new(bintray_user: 'user', bintray_key: 'key')
     projects = [

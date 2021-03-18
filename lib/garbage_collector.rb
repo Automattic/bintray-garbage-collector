@@ -29,6 +29,11 @@ class GarbageCollector
 
       dev_versions = @bintray.get_bintray_versions(project: project[:bintray])
 
+      if dev_versions.nil?
+        log "> Project not found. Aborting."
+        next
+      end
+
       if dev_versions.empty?
         log "> No versions found. Moving on."
         next
