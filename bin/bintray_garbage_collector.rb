@@ -1,10 +1,9 @@
 require 'dotenv'
+require 'psych'
 require_relative '../lib/garbage_collector.rb'
 
-# We might want to extract this in a file to make it easier to edit
-projects = [
-  { bintray: 'wordpress-mobile/maven/utils', github: 'wordpress-mobile/WordPress-Utils-Android' }
-]
+source = Psych.load(File.read('projects.yml'), symbolize_names: true)
+projects = source[:projects]
 
 Dotenv.load
 

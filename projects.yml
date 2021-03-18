@@ -1,0 +1,4 @@
+projects:
+  - name: WordPress Utils
+    bintray: wordpress-mobile/maven/utils
+    github: wordpress-mobile/WordPress-Utils-Android
