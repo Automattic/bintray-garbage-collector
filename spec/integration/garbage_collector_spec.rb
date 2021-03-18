@@ -11,7 +11,12 @@ RSpec.describe GarbageCollector do
     expect_any_instance_of(BintrayClient).to receive(:get_bintray_versions)
       .and_return(nil)
 
-    gb.run(projects)
+    # Capture the standard output to ensure the user would see a message and to
+    # have a clean RSpec output. Not interested in the message content itself.
+    expect(STDOUT).to receive(:puts).at_least(1).times
+    expect { gb.run(projects) }.to raise_error(SystemExit) do |error|
+      expect(error.status).to eq(1)
+    end
   end
 
   it 'requests to delete all the Bintray version for closed PRs' do

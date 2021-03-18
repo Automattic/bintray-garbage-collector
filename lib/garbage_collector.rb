@@ -24,13 +24,16 @@ class GarbageCollector
   #
   # @param projects [Array] the array of +Hash+ projects on which to run the garbage collection
   def run(projects)
+    projects_not_found = []
+
     projects.each do |project|
       log "Looking for versions to delete for #{project[:bintray]}..."
 
       dev_versions = @bintray.get_bintray_versions(project: project[:bintray])
 
       if dev_versions.nil?
-        log "> Project not found. Aborting."
+        log "> Project not found."
+        projects_not_found.push(project)
         next
       end
 
@@ -65,11 +68,17 @@ class GarbageCollector
         end
       end
     end
+
+    unless projects_not_found.empty?
+      log("\nGarbage collection was unsuccessful. Could not find projects:", forced: true)
+      projects_not_found.each { |p| log("> #{p[:bintray]}", forced: true) }
+      exit 1
+    end
   end
 
   private
 
-  def log(message)
-    puts message if @verbose
+  def log(message, forced: false)
+    puts message if @verbose || forced
   end
 end
