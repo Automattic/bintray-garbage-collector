@@ -1,12 +1,30 @@
 require 'dotenv'
+require 'optparse'
+require 'psych'
 require_relative '../lib/garbage_collector.rb'
 
-# We might want to extract this in a file to make it easier to edit
-projects = [
-  { bintray: 'wordpress-mobile/maven/utils', github: 'wordpress-mobile/WordPress-Utils-Android' }
-]
+source = Psych.load(File.read('projects.yml'), symbolize_names: true)
+projects = source[:projects]
 
 Dotenv.load
+
+# Default options
+options = {
+  verbose: true,
+  dry_run: false
+}
+
+OptionParser.new do |parser|
+  parser.banner = "Usage: #{File.basename(__FILE__)} [options]"
+
+  parser.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+
+  parser.on('-d', '--dry-run', "Dry run") do
+    options[:dry_run] = true
+  end
+end.parse!
 
 def read_from_environment!(key)
   value = ENV[key]
@@ -18,6 +36,6 @@ end
 GarbageCollector.new(
   bintray_user: read_from_environment!('BINTRAY_USER'),
   bintray_key: read_from_environment!('BINTRAY_KEY'),
-  verbose: true,
-  dry_run: false
+  verbose: options[:verbose],
+  dry_run: options[:dry_run]
 ).run(projects)
