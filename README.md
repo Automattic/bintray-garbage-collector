@@ -6,3 +6,4 @@ To make testing and reviewing development builds of our libraries, we automatica
 To avoid having the repository size swell and to avoid wasting energy in storage of binaries that we no longer need, we periodically delete all the arfifacts from merged branches.
 
 To do so, we use a CircleCI scheduled build and the Bintray CLI.
+test
